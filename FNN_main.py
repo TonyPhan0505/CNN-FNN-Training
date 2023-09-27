@@ -12,7 +12,7 @@ class Params:
 
     def __init__(self):
         self.device = 'gpu'
-        self.loss_type = "ce"
+        self.loss_type = "l2"
         self.batch_size = Params.BatchSize()
         self.n_epochs = 10
         self.learning_rate = 1e-1
