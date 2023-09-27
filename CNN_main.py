@@ -75,8 +75,8 @@ class Args:
     'MNIST': run on MNIST dataset 
     'CIFAR10': run on CIFAR10 dataset 
     """
-    dataset = "MNIST"
-    #dataset = "CIFAR10"
+    #dataset = "MNIST"
+    dataset = "CIFAR10"
 
     """
     set to 0 to run on cpu

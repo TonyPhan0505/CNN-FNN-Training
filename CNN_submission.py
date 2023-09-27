@@ -25,22 +25,23 @@ class Net(nn.Module):
         self.in_channels = in_channels
         self.third_in_channels = None
         if self.in_channels == 3:
-            self.second_in_channels = 10240
+            self.third_in_channels = 4160
         else:
-            self.second_in_channels = 7840
+            self.third_in_channels = 2940
         self.model = nn.Sequential(
-            nn.Conv2d(in_channels=self.in_channels, out_channels=40, kernel_size=3, padding=1),
+            nn.Conv2d(in_channels=self.in_channels, out_channels=30, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2, stride=2),
+
+            nn.Conv2d(in_channels=30, out_channels=65, kernel_size=3, padding=1),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2),
             nn.Flatten(),
 
-            nn.Linear(self.second_in_channels, 80),
+            nn.Linear(self.third_in_channels, 130),
             nn.ReLU(),
 
-            nn.Linear(80, 160),
-            nn.ReLU(),
-
-            nn.Linear(160, 10),
+            nn.Linear(130, 10),
             nn.Softmax(dim=1)
         )
     
