@@ -24,7 +24,8 @@ class FNN(nn.Module):
     def get_loss(self, output, target):
         loss = None
         if self.loss_type == "l2":
-            loss = F.mse_loss(output, target.float().view_as(output))
+            target_one_hot = F.one_hot(target, num_classes=10).float()
+            loss = F.mse_loss(output, target_one_hot)
         elif self.loss_type == "ce":
             loss = F.cross_entropy(output, target)
         else:

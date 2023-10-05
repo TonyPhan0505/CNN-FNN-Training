@@ -9,7 +9,7 @@ from torch.utils.data import random_split
 #TO DO: Complete this with your CNN architecture. Make sure to complete the architecture requirements.
 #The init has in_channels because this changes based on the dataset. 
 
-n_epochs = 10
+n_epochs = 5
 batch_size_train = 200
 learning_rate = 1e-3
 validation_interval = 3
@@ -24,27 +24,32 @@ class Net(nn.Module):
         super(Net, self).__init__()
         self.in_channels = in_channels
         self.third_in_channels = None
+        self.third_out_channels = None
         if self.in_channels == 3:
-            self.third_in_channels = 4160
+            self.third_in_channels = 3840
+            self.third_out_channels = 70
         else:
             self.third_in_channels = 2940
+            self.third_out_channels = 60
         self.model = nn.Sequential(
             nn.Conv2d(in_channels=self.in_channels, out_channels=30, kernel_size=3, padding=1),
+            nn.BatchNorm2d(30),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2),
 
-            nn.Conv2d(in_channels=30, out_channels=65, kernel_size=3, padding=1),
+            nn.Conv2d(in_channels=30, out_channels=60, kernel_size=3, padding=1),
+            nn.BatchNorm2d(60),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2),
             nn.Flatten(),
 
-            nn.Linear(self.third_in_channels, 130),
+            nn.Linear(self.third_in_channels, self.third_out_channels),
             nn.ReLU(),
 
-            nn.Linear(130, 10),
+            nn.Linear(self.third_out_channels, 10),
             nn.Softmax(dim=1)
         )
-    
+
     def forward(self, x):
         if self.in_channels == 3:
             x = x.view(-1, 3, 32, 32)
@@ -76,8 +81,8 @@ def load_dataset(
 
     return train_dataset, valid_dataset
 
-#TO DO: Complete this function. This should train the model and return the final trained model. 
-#Similar to Assignment-1, make sure to print the validation accuracy to see 
+#TO DO: Complete this function. This should train the model and return the final trained model.
+#Similar to Assignment-1, make sure to print the validation accuracy to see
 #how the model is performing.
 
 def eval(data_loader, model, device, dataset):
@@ -95,10 +100,10 @@ def eval(data_loader, model, device, dataset):
     print(dataset+'set: Avg. loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(loss, correct, len(data_loader.dataset), 100. * correct / len(data_loader.dataset)))
 
 def train(
-        epoch, 
-        data_loader, 
-        model, 
-        device, 
+        epoch,
+        data_loader,
+        model,
+        device,
         optimizer
 ):
     for batch_idx, (data, target) in enumerate(data_loader):
